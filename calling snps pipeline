@@ -1,0 +1,79 @@
+#Creating the fasta sequence dictionary file
+#java -jar /home/asgiraldoc/Pfalciparum_SRA/picard.jar CreateSequenceDictionary R=PlasmoDB-53_PfalciparumKE01_AnnotatedCDSs.fasta O=PlasmoDB-53_PfalciparumKE01_AnnotatedCDSs.dict
+
+
+#Creating the fasta index file 
+#samtools faidx PlasmoDB-53_PfalciparumKE01_AnnotatedCDSs.fasta
+
+# sort the bam file
+for i in `ls *.bam`
+
+	do
+		base=$(basename $i ".bam")
+		dir="/home/asgiraldoc/Pfalciparum_SRA"
+
+		samtools sort -@ 30 ${dir}/${base}.bam -o ${dir}/${base}_sorted.bam 
+
+	done &&
+
+#Mark and remove duplicates
+
+for i in `ls *_sorted.bam`
+
+       do 
+     		base=$(basename $i "_sorted.bam")
+                dir="/home/asgiraldoc/Pfalciparum_SRA"
+
+              java -jar /home/asgiraldoc/Pfalciparum_SRA/picard.jar MarkDuplicates INPUT=${dir}/${base}_sorted.bam OUTPUT=${dir}/${base}.rmdup.bam METRICS_FILE=duplicateMatrix REMOVE_DUPLICATES=true
+      
+       done &&
+
+# Replace all read groups in the INPUT (sorted.bam)file with a single new read group and assign all reads to this read group in the OUTPUT BAM file.
+
+for i in `ls *.rmdup.bam`
+
+        do 
+                base=$(basename $i ".rmdup.bam")
+                dir="/home/asgiraldoc/Pfalciparum_SRA"
+
+                java -jar /home/asgiraldoc/Pfalciparum_SRA/picard.jar AddOrReplaceReadGroups I=${dir}/${base}.rmdup.bam O=${dir}/${base}.rmdup.addgp.bam LB=whatever PL=illumina PU=whatever SM=whatever
+	
+	done &&
+
+# Indexing the output bam files
+
+for i in `ls *.rmdup.addgp.bam`
+
+        do 
+                base=$(basename $i ".rmdup.addgp.bam")
+                dir="/home/asgiraldoc/Pfalciparum_SRA"
+
+                samtools index ${dir}/${base}.rmdup.addgp.bam
+	done &&
+
+# Define intervals
+
+for i in `ls *.rmdup.addgp.bam`
+
+        do 
+                base=$(basename $i ".rmdup.addgp.bam")
+                dir="/home/asgiraldoc/Pfalciparum_SRA"
+
+                java  -jar /home/asgiraldoc/Pfalciparum_SRA/GenomeAnalysisTK.jar -T RealignerTargetCreator -R PlasmoDB-53_PfalciparumKE01_AnnotatedCDSs.fasta  -I ${dir}/${base}.rmdup.addgp.bam -o ${dir}/${base}.rmdup.addgp.intervals
+        
+	done &&
+
+# Realign against indels
+
+for i in `ls *.rmdup.addgp.bam`
+	do 
+        base=$(basename $i ".rmdup.addgp.bam")
+        dir="/home/asgiraldoc/Pfalciparum_SRA"
+
+   	 java  -jar /home/asgiraldoc/Pfalciparum_SRA/GenomeAnalysisTK.jar -I  ${dir}/${base}.rmdup.addgp.bam -R PlasmoDB-53_PfalciparumKE01_AnnotatedCDSs.fasta  -T IndelRealigner -targetIntervals ${dir}/${base}.rmdup.addgp.intervals  -o ${dir}/${base}.realigned.bam
+ done
+
+# Calling SNPs
+
+samtools mpileup -C50 -Q 20  -uf PlasmoDB-53_PfalciparumKE01_AnnotatedCDSs.fasta *.bam | bcftools call -c > PfalciparumKE01_pop.vcf
+vcftools --vcf PfalciparumKE01_pop.vcf --remove-indels --recode --recode-INFO-all --out PfalciparumKE01_pop_snps --minQ 20.00 --minDP 6
