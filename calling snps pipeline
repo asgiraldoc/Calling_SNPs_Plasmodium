@@ -75,5 +75,5 @@ for i in `ls *.rmdup.addgp.bam`
 
 # Calling SNPs
 
-samtools mpileup -C50 -Q 20  -uf PlasmoDB-53_PfalciparumKE01_AnnotatedCDSs.fasta *.bam | bcftools call -c > PfalciparumKE01_pop.vcf
+samtools mpileup -C50 -Q 20  -uf PlasmoDB-53_PfalciparumKE01_AnnotatedCDSs.fasta *realigned.bam | bcftools call -c > PfalciparumKE01_pop.vcf
 vcftools --vcf PfalciparumKE01_pop.vcf --remove-indels --recode --recode-INFO-all --out PfalciparumKE01_pop_snps --minQ 20.00 --minDP 6
