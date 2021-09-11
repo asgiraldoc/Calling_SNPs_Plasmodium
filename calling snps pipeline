@@ -1,3 +1,10 @@
+### GenomeAnalysisTK version 3.8-1-0-gf15c1c3ef
+### Picard version 2.25.5
+### Samtools version 1.13
+### bcftools version 1.12
+### vcftools version 0.1.17
+
+
 #Creating the fasta sequence dictionary file
 #java -jar /home/asgiraldoc/Pfalciparum_SRA/picard.jar CreateSequenceDictionary R=PlasmoDB-53_PfalciparumKE01_AnnotatedCDSs.fasta O=PlasmoDB-53_PfalciparumKE01_AnnotatedCDSs.dict
 
