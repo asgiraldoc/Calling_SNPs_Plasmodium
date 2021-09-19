@@ -84,4 +84,7 @@ for i in `ls *.rmdup.addgp.bam`
 
 samtools mpileup -C50 -Q 20  -uf PlasmoDB-53_PfalciparumKE01_AnnotatedCDSs.fasta *realigned.bam | bcftools call -c > PfalciparumKE01_pop.vcf
 sed -n '/CHROM/,$p' PfalciparumKE01_pop.vcf > PfalciparumKE01_pop_noheader.vcf
-vcftools --vcf PfalciparumKE01_pop.vcf --remove-indels --recode --recode-INFO-all --out PfalciparumKE01_pop_snps --minQ 20.00 --minDP 6
+grep -v -e "INDEL" PfalciparumKE01_pop_noheader.vcf > PfalciparumKE01_pop_noheader_noindel.vcf
+sed -i 's/#//g' PfalciparumKE01_pop_noheader_noindel.vcf
+
+python vcf_change.py PfalciparumKE01_pop_noheader_noindel.vcf final_PfalciparumKE01.vcf
