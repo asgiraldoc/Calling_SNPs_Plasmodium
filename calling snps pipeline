@@ -82,7 +82,7 @@ for i in `ls *.rmdup.addgp.bam`
 
 # Calling SNPs
 
-samtools mpileup -C50 -Q 20  -uf PlasmoDB-53_PfalciparumKE01_AnnotatedCDSs.fasta *realigned.bam | bcftools call -c > PfalciparumKE01_pop.vcf
+samtools mpileup -C50 -Q 20 -R -uf PlasmoDB-53_PfalciparumKE01_AnnotatedCDSs.fasta *realigned.bam | bcftools call -c > PfalciparumKE01_pop.vcf
 sed -n '/CHROM/,$p' PfalciparumKE01_pop.vcf > PfalciparumKE01_pop_noheader.vcf
 grep -v -e "INDEL" PfalciparumKE01_pop_noheader.vcf > PfalciparumKE01_pop_noheader_noindel.vcf
 sed -i 's/#//g' PfalciparumKE01_pop_noheader_noindel.vcf
