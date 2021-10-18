@@ -1,4 +1,4 @@
-# Mark and remove duplicates  
+#correct RG
 
 for i in `ls *.bam`
 
@@ -49,7 +49,7 @@ for i in `ls *_raw_variants.vcf`
      	 base=$(basename $i "_raw_variants.vcf")
        dir="/home/asgiraldoc/sample_mcmahon/test"
               
-        /home/asgiraldoc/gatk-4.2.2.0/gatk SelectVariants -R PlasmoDB.genome.noRibosome2.fasta -V ${dir}/${base}_raw_variants.vcf -selectType SNP -o ${dir}/${base}_raw_snps.vcf
+        /home/asgiraldoc/gatk-4.2.2.0/gatk SelectVariants -R PlasmoDB.genome.noRibosome2.fasta -V ${dir}/${base}_raw_variants.vcf -selectType SNP -O ${dir}/${base}_raw_snps.vcf
                 
        done &&
        
@@ -61,7 +61,7 @@ for i in `ls *_raw_variants.vcf`
      	 base=$(basename $i "_raw_variants.vcf")
        dir="/home/asgiraldoc/sample_mcmahon/test"
               
-        /home/asgiraldoc/gatk-4.2.2.0/gatk SelectVariants -R PlasmoDB.genome.noRibosome2.fasta -V ${dir}/${base}_raw_variants.vcf -selectType INDEL -o ${dir}/${base}_raw_indels.vcf
+        /home/asgiraldoc/gatk-4.2.2.0/gatk SelectVariants -R PlasmoDB.genome.noRibosome2.fasta -V ${dir}/${base}_raw_variants.vcf -selectType INDEL -O ${dir}/${base}_raw_indels.vcf
                 
        done &&
        
@@ -161,7 +161,7 @@ for i in `ls *_recal_reads.bam`
      	 base=$(basename $i "_recal_reads.bam")
        dir="/home/asgiraldoc/sample_mcmahon/test"
               
-        /home/asgiraldoc/gatk-4.2.2.0/gatk HaplotypeCaller -R PlasmoDB.genome.noRibosome2.fasta -I ${dir}/${base}_recal_reads.bam -o ${dir}/${base}_raw_variants_recal.vcf
+        /home/asgiraldoc/gatk-4.2.2.0/gatk HaplotypeCaller -R PlasmoDB.genome.noRibosome2.fasta -I ${dir}/${base}_recal_reads.bam -O ${dir}/${base}_raw_variants_recal.vcf
        
        done &&
        
