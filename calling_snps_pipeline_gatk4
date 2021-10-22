@@ -199,3 +199,6 @@ done
 
 ## merge vcf files
 bcftools merge --force-samples --no-index *.vcf.gz -O v -o merged.vcf.gz
+
+## remove indels
+bcftools view --types snps merged.vcf > merged_noindels.vcf
