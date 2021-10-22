@@ -188,4 +188,14 @@ for i in `ls *_raw_variants_recal.vcf`
             /home/asgiraldoc/gatk-4.2.2.0/gatk VariantFiltration -R PlasmoDB.genome.noRibosome2.fasta -V ${dir}/${base}_raw_variants_recal.vcf -O ${dir}/${base}_filtered_snps_final.vcf -filter-name "QD_filter" -filter "QD < 2.0" -filter-name "FS_filter" -filter "FS > 60.0" -filter-name "MQ_filter" -filter "MQ < 40.0" -filter-name "SOR_filter" -filter "SOR > 4.0" -filter-name "MQRankSum_filter" -filter "MQRankSum < -12.5"  -filter-name "ReadPosRankSum_filter" -filter "ReadPosRankSum < -8.0"
 
                         
-       done
+       done &&
+
+
+## compress vcf files
+for i in *_final.vcf
+do
+bgzip $i
+done
+
+## merge vcf files
+bcftools merge --force-samples --no-index *.vcf.gz -O v -o merged.vcf.gz
